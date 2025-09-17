@@ -42,44 +42,44 @@ if uploaded_file is not None:
             st.success("Rows with missing values have been removed.")
             st.write(df.head())
 
-        # Column selection for plotting
+        # Select columns for plotting
         st.subheader("Select Variables to Plot")
         numeric_cols = df.select_dtypes(include='number').columns.tolist()
         categorical_cols = df.select_dtypes(include='object').columns.tolist()
 
-        # Select two numeric variables for plotting
-        x_var = st.selectbox("Select X variable (numeric)", numeric_cols)
-        y_var = st.selectbox("Select Y variable (numeric)", numeric_cols)
+        # Select X and Y variables for plotting
+        x_var = st.selectbox("Select X variable", numeric_cols)
+        y_var = st.selectbox("Select Y variable", numeric_cols)
 
         # Scatter Plot
-        if st.button("Scatter Plot"):
+        if st.button("Generate Scatter Plot"):
             fig, ax = plt.subplots()
             sns.scatterplot(data=df, x=x_var, y=y_var, ax=ax)
-            ax.set_title(f"Scatter Plot of {x_var} vs {y_var}")
+            ax.set_title(f"Scatter Plot of {y_var} vs {x_var}")
             st.pyplot(fig)
 
         # Box Plot
-        if st.button("Box Plot"):
+        if st.button("Generate Box Plot"):
             fig, ax = plt.subplots()
             sns.boxplot(x=x_var, y=y_var, data=df, ax=ax)
             ax.set_title(f"Box Plot of {y_var} grouped by {x_var}")
             st.pyplot(fig)
 
         # Violin Plot
-        if st.button("Violin Plot"):
+        if st.button("Generate Violin Plot"):
             fig, ax = plt.subplots()
             sns.violinplot(x=x_var, y=y_var, data=df, ax=ax)
             ax.set_title(f"Violin Plot of {y_var} grouped by {x_var}")
             st.pyplot(fig)
 
-        # Histogram for one variable
-        if st.button("Histogram"):
+        # Histogram for X variable
+        if st.button("Generate Histogram for X"):
             fig, ax = plt.subplots()
             sns.histplot(df[x_var], bins=20, kde=True, ax=ax)
             ax.set_title(f"Histogram of {x_var}")
             st.pyplot(fig)
 
-        # Correlation Heatmap for numeric columns
+        # Correlation Heatmap (only for numeric columns)
         if st.button("Show Correlation Heatmap"):
             st.subheader("Correlation Heatmap")
             correlation = df.corr()
