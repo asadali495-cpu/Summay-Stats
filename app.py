@@ -43,50 +43,68 @@ if uploaded_file is not None:
             st.write(df.head())
 
         # Select columns for plotting
-        st.subheader("Select Variables to Plot")
-        numeric_cols = df.select_dtypes(include='number').columns.tolist()
-        categorical_cols = df.select_dtypes(include='object').columns.tolist()
-
-        # Select X and Y variables for plotting
-        x_var = st.selectbox("Select X variable", numeric_cols)
-        y_var = st.selectbox("Select Y variable", numeric_cols)
+        st.subheader("Select Variables for Plots")
 
         # Scatter Plot
+        st.subheader("Scatter Plot")
+        x_var_scatter = st.selectbox("Select X variable for Scatter Plot", df.select_dtypes(include='number').columns.tolist())
+        y_var_scatter = st.selectbox("Select Y variable for Scatter Plot", df.select_dtypes(include='number').columns.tolist())
         if st.button("Generate Scatter Plot"):
             fig, ax = plt.subplots()
-            sns.scatterplot(data=df, x=x_var, y=y_var, ax=ax)
-            ax.set_title(f"Scatter Plot of {y_var} vs {x_var}")
+            sns.scatterplot(data=df, x=x_var_scatter, y=y_var_scatter, ax=ax)
+            ax.set_title(f"Scatter Plot of {y_var_scatter} vs {x_var_scatter}")
             st.pyplot(fig)
 
         # Box Plot
+        st.subheader("Box Plot")
+        x_var_box = st.selectbox("Select X variable for Box Plot", df.select_dtypes(include='number').columns.tolist())
+        y_var_box = st.selectbox("Select Y variable for Box Plot", df.select_dtypes(include='number').columns.tolist())
         if st.button("Generate Box Plot"):
             fig, ax = plt.subplots()
-            sns.boxplot(x=x_var, y=y_var, data=df, ax=ax)
-            ax.set_title(f"Box Plot of {y_var} grouped by {x_var}")
+            sns.boxplot(x=x_var_box, y=y_var_box, data=df, ax=ax)
+            ax.set_title(f"Box Plot of {y_var_box} grouped by {x_var_box}")
             st.pyplot(fig)
 
         # Violin Plot
+        st.subheader("Violin Plot")
+        x_var_violin = st.selectbox("Select X variable for Violin Plot", df.select_dtypes(include='number').columns.tolist())
+        y_var_violin = st.selectbox("Select Y variable for Violin Plot", df.select_dtypes(include='number').columns.tolist())
         if st.button("Generate Violin Plot"):
             fig, ax = plt.subplots()
-            sns.violinplot(x=x_var, y=y_var, data=df, ax=ax)
-            ax.set_title(f"Violin Plot of {y_var} grouped by {x_var}")
+            sns.violinplot(x=x_var_violin, y=y_var_violin, data=df, ax=ax)
+            ax.set_title(f"Violin Plot of {y_var_violin} grouped by {x_var_violin}")
             st.pyplot(fig)
 
         # Histogram for X variable
+        st.subheader("Histogram")
+        x_var_hist = st.selectbox("Select variable for Histogram", df.select_dtypes(include='number').columns.tolist())
         if st.button("Generate Histogram for X"):
             fig, ax = plt.subplots()
-            sns.histplot(df[x_var], bins=20, kde=True, ax=ax)
-            ax.set_title(f"Histogram of {x_var}")
+            sns.histplot(df[x_var_hist], bins=20, kde=True, ax=ax)
+            ax.set_title(f"Histogram of {x_var_hist}")
             st.pyplot(fig)
 
-        # Correlation Heatmap (only for numeric columns)
-        if st.button("Show Correlation Heatmap"):
-            st.subheader("Correlation Heatmap")
-            correlation = df.corr()
-            fig, ax = plt.subplots()
-            sns.heatmap(correlation, annot=True, fmt=".2f", cmap='coolwarm', ax=ax)
-            ax.set_title("Correlation Heatmap")
+        # Pair Plot for numeric columns
+        if st.button("Generate Pair Plot"):
+            st.subheader("Pair Plot of Numeric Variables")
+            fig = sns.pairplot(df.select_dtypes(include='number'))
             st.pyplot(fig)
+
+        # Count Plot for categorical variables
+        if st.button("Generate Count Plot"):
+            if df.select_dtypes(include='object').shape[1] > 0:
+                cat_var = st.selectbox("Select Categorical Variable for Count Plot", df.select_dtypes(include='object').columns.tolist())
+                fig, ax = plt.subplots()
+                sns.countplot(data=df, x=cat_var, ax=ax)
+                ax.set_title(f"Count Plot of {cat_var}")
+                st.pyplot(fig)
+            else:
+                st.warning("No categorical columns available for count plot.")
+
+        # Unique Values Summary
+        st.subheader("Unique Values in Each Column")
+        unique_values = {col: df[col].nunique() for col in df.columns}
+        st.write(unique_values)
 
         # Show Data Types
         st.subheader("Data Types")
